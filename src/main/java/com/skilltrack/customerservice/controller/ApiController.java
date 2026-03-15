@@ -3,6 +3,7 @@ import com.skilltrack.customerservice.model.Customer;
 import com.skilltrack.customerservice.model.Images;
 import com.skilltrack.customerservice.service.CustomerApiService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,13 @@ public class ApiController {
     
     
     @GetMapping("/ask")
-    public String ask(@RequestParam String prompt) {
-    	return chatClient.prompt().user(prompt).call().content();
+    public Flux<String> ask(@RequestParam String prompt) {
+
+        return chatClient.prompt()
+                .system("Answer briefly in 3 lines")
+                .user(prompt)
+                .stream()
+                .content();
     }
 
     
